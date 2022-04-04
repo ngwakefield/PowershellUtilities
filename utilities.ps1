@@ -156,6 +156,7 @@ function Strip-ExcelPassword {
 function Export-DirectoryToCSV {
     param ($target)
 
+    # Pass target directory to export info to CSV
     Get-ChildItem -Recurse $target | ?{ -not $_.PSIsContainer } | ForEach-Object {$_ | Add-Member -Name "Owner" -MemberType NoteProperty - Value (Get-Acl $_.FullName).Owner -PassThru} |     Sort-Object fullname | Select FullName, @{ n = 'Folder'; e = {Convert-Path $_.PSParentPath} } , Name, Extension, CreationTime, LastWriteTime, Length, Owner, Attributes | Export-Csv -Force -NoTypeInformation .\file_details.csv
 
 }
