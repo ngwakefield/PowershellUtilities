@@ -30,7 +30,7 @@ Function Invoke-NamedParameter{
             ## Note: It is ok to use a hashtable here because the keys (parameter names) and values (args)
             ## will be output in the same order.  We don't need to worry about the order so long as
             ## all parameters have names
-            $Object.GetType().InvokeMember(($Method, 
+            $Object.GetType().InvokeMember($Method, 
             [System.Reflection.BindingFlags]::InvokeMethod,
             $null, ## Binder
             $Object, ## Target
@@ -60,4 +60,35 @@ Function Invoke-NamedParameter{
 function PPT_Template_Dynamic {
 
     param($title)
+    if(!$title)
+        {$title = @()}
+    
+    $ppt = New-Object -ComObject Powerpoint.Application
+    $fname = "YYYY-MM-DD Powerpoint Template.pptm"
+    # Need to be in the directory containing file, or add path info
+    
+    $ppt.Presentations.Open($fname)
+    $authordate = $fname+"!Module1.Add_Author_Date_Boxes"
+    Invoke-NamedParameter $ppt "Run" -argument @($authordate, $title)
+    $save = $fname+"!Module1.Save_File"
+    Invoke-NamedParameter $ppt "Run" -argument @($save, $title)
+
 }
+
+function Test-Macro {
+    param ()
+
+    $ppt = New-Object -ComObject Powerpoint.Application
+    $fname = "test.pptm"
+    $ppt.Presentations.Open($fname)
+    $authordate = $fname + "!Module1.Add_Author_Date_Boxes"
+    $title = "mytitle"
+    Invoke-NamedParameter $ppt "Run" -Argument @($authordate, $title)
+
+}
+
+# Need to set install location for utilities.ps1
+# Set-Alias twoway 
+# Set-Alias hardlink
+
+
