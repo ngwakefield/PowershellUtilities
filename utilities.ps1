@@ -31,3 +31,26 @@ $shortcut.TargetPath = $dir1
 $shortcut.Save()
 
 }
+
+function Make-Hardlink {
+
+# Prompts for a source file and a target file
+# Creates a hard link at the target location to source file
+# TODO: Add file checking?
+
+# Prompt for source file
+$original = Read-Host -Prompt 'What is the file you want to create a hard link on?'
+# Prompt for target file
+$newhardlink = Read-Host -Prompt 'What is the path where you want the new hard link to exist'
+
+# Trim illegal characters
+$original = $original.replace('`n', '').replace('`r', '').replace('`"', '')
+$newhardlink = $newhardlink.replace('`n', '').replace('`r', '').replace('`"', '')
+
+$a = New-Object -ComObject WScript.Shell
+$answer = $a.Popup("Script will create hardlink to: `n " + $original + '`n' + $newhardlink, 0, 'Proceed?', 32+3)
+
+# Execute the hardlink
+New-Item -ItemType HardLink -Path $newhardlink -Target $original
+
+}
